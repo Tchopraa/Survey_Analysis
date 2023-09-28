@@ -1,57 +1,57 @@
-Sentiment_Texts=[]
-categories = []
+import pandas as pd
+import nltk
+from nltk.sentiment import SentimentIntensityAnalyzer
+from nltk.corpus import stopwords
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
 
-for text in df['input_1']:
+# Download necessary NLTK resources
+nltk.download('vader_lexicon')
+nltk.download('stopwords')
+nltk.download('punkt')
+nltk.download('wordnet')
+
+# Read the Excel file
+df = pd.read_excel('path_to_excel_file.xlsx')
+
+# Initialize sentiment analyzer
+sia = SentimentIntensityAnalyzer()
+
+# Perform text cleaning and sentiment analysis
+stop_words = set(stopwords.words('english'))
+lemmatizer = WordNetLemmatizer()
+
+cleaned_texts = []
+sentiments = []
+
+for text in df['Text_Column']:
     # Convert to lowercase
     text = text.lower()
-   
+    
     # Remove punctuation and special characters
     text = ''.join(char for char in text if char.isalnum() or char.isspace())
-   
+    
     # Tokenize the text
     tokens = word_tokenize(text)
-   
+    
     # Remove stopwords
     filtered_tokens = [token for token in tokens if token not in stop_words]
-   
+    
     # Lemmatize the tokens
     lemmatized_tokens = [lemmatizer.lemmatize(token) for token in filtered_tokens]
-   
+    
     # Join the tokens back to a string
     cleaned_text = ' '.join(lemmatized_tokens)
-   
+    
     # Perform sentiment analysis
     sentiment = sia.polarity_scores(cleaned_text)['compound']
-   
-    # decide sentiment as positive, negative and neutral
-    if sentiment >= 0.05 :
-        Sentiment_Text = "Positive"
- 
-    elif sentiment <= - 0.05 :
-        Sentiment_Text = "Negative"
- 
-    else :
-        Sentiment_Text = "Neutral"
-
-
-    # Assign category based on keywords
-    category = 'Unknown'
-    for keyword, cats in keyword_categories.items():
-        if any(word in cleaned_text for word in cats):
-            category = keyword
-            break
-   
+    
     cleaned_texts.append(cleaned_text)
     sentiments.append(sentiment)
-    Sentiment_Texts.append(Sentiment_Text)
-    categories.append(category)
 
-# Add cleaned texts, sentiments, and categories to the dataframe
+# Add cleaned texts and sentiments to the dataframe
 df['Cleaned_Text'] = cleaned_texts
 df['Sentiment'] = sentiments
-df['Sentiment_Text']=Sentiment_Texts
-df['Category'] = categories
 
 # Save the updated dataframe to a new Excel file
-#df.to_excel('path_to_updated_file.xlsx', index=False)
-df.head()
+df.to_excel('path_to_updated_file.xlsx', index=False)
