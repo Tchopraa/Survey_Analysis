@@ -1,0 +1,21 @@
+ # Assign category based on keywords
+    category = 'Unknown'
+    for keyword, cats in keyword_categories.items():
+        if any(word in cleaned_text for word in cats):
+            category = keyword
+            break
+   
+    cleaned_texts.append(cleaned_text)
+    sentiments.append(sentiment)
+    Sentiment_Texts.append(Sentiment_Text)
+    categories.append(category)
+
+# Add cleaned texts, sentiments, and categories to the dataframe
+df['Cleaned_Text'] = cleaned_texts
+df['Sentiment'] = sentiments
+df['Sentiment_Text']=Sentiment_Texts
+df['Category'] = categories
+
+# Save the updated dataframe to a new Excel file
+#df.to_excel('path_to_updated_file.xlsx', index=False)
+df.head()
